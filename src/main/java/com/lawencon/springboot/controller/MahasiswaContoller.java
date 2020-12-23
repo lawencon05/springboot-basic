@@ -1,5 +1,10 @@
 package com.lawencon.springboot.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lawencon.springboot.model.Mahasiswa;
+import com.lawencon.springboot.model.Universitas;
+import com.lawencon.springboot.service.MahasiswaService;
 
 /**
  * @author lawencon05
@@ -20,6 +28,9 @@ import com.lawencon.springboot.model.Mahasiswa;
 @RestController
 @RequestMapping("/mhs")
 public class MahasiswaContoller {
+
+	@Autowired
+	private MahasiswaService mahasiswaService;
 
 	@GetMapping
 	public ResponseEntity<?> getMhs(@RequestParam("id") String id, @RequestParam("name") String name) {
@@ -29,8 +40,37 @@ public class MahasiswaContoller {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getMhsPath(@PathVariable("id") String id) {
-		Long realId = Long.valueOf(id);
-		return new ResponseEntity<>("Get data path: " + realId, HttpStatus.OK);
+		try {
+			Long realId = Long.valueOf(id);
+			Mahasiswa m = new Mahasiswa();
+			m.setNim("1111");
+			m.setNama("Iqbal");
+
+			Universitas u = new Universitas();
+			u.setId(1L);
+
+			m.setUniversitas(u);
+
+			m.setWaktuMasuk(LocalDate.now());
+			m.setWaktuMasukTime(LocalDateTime.now());
+
+			mahasiswaService.insert(m);
+			m = mahasiswaService.getMhsByNimAndNama("1111", "Iqbal");
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+			m.setNama("Iqbal2");
+			mahasiswaService.update(m);
+
+			mahasiswaService.delete(4L);
+			List<Mahasiswa> listMhs = mahasiswaService.getAllMhsCustom();
+			return new ResponseEntity<>(m, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 	@PostMapping

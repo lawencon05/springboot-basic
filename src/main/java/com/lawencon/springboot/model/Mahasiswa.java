@@ -2,22 +2,43 @@ package com.lawencon.springboot.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-/**
- * @author lawencon05
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Entity
+@JsonInclude(Include.NON_NULL) // jika ada variable yg null akan diabaikan
 public class Mahasiswa {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(nullable = false, unique = true)
 	private String nim;
 	private String nama;
-	private List<Matkul> matkul;
+
+	@ManyToOne(fetch = FetchType.LAZY) // lazy = tidak ditarik, eager = auto tarik
+	@JoinColumn(name = "univ_id")
+	@JsonIgnoreProperties(value = { "universitas", "hibernateLazyInitializer" }) // agar tidak terjadi error saat
+																					// convert jakson
+	private Universitas universitas;
+
+	@Column(name = "waktu_masuk")
 	private LocalDate waktuMasuk;
 
+	@Column(name = "waktu_masuk_time")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime waktuMasukTime;
 
@@ -37,6 +58,14 @@ public class Mahasiswa {
 		this.waktuMasuk = waktuMasuk;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getNim() {
 		return nim;
 	}
@@ -53,12 +82,11 @@ public class Mahasiswa {
 		this.nama = nama;
 	}
 
-	public List<Matkul> getMatkul() {
-		return matkul;
+	public Universitas getUniversitas() {
+		return universitas;
 	}
 
-	public void setMatkul(List<Matkul> matkul) {
-		this.matkul = matkul;
+	public void setUniversitas(Universitas universitas) {
+		this.universitas = universitas;
 	}
-
 }
