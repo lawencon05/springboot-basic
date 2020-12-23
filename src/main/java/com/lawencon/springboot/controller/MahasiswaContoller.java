@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lawencon.springboot.model.Mahasiswa;
@@ -54,18 +53,15 @@ public class MahasiswaContoller {
 			m.setWaktuMasuk(LocalDate.now());
 			m.setWaktuMasukTime(LocalDateTime.now());
 
-			mahasiswaService.insert(m);
-			m = mahasiswaService.getMhsByNimAndNama("1111", "Iqbal");
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			// mahasiswaService.insert(m);
+			m = mahasiswaService.getMhsByNimAndNama("1111", "Iqbal2");
 
 			m.setNama("Iqbal2");
-			mahasiswaService.update(m);
+			// mahasiswaService.update(m);
 
-			mahasiswaService.delete(4L);
+			// mahasiswaService.delete(4L);
 			List<Mahasiswa> listMhs = mahasiswaService.getAllMhsCustom();
-			return new ResponseEntity<>(m, HttpStatus.OK);
+			return new ResponseEntity<>(listMhs, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,6 +75,7 @@ public class MahasiswaContoller {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new JavaTimeModule()); // for localdate or localdatetime
 			Mahasiswa mhs = mapper.readValue(body, Mahasiswa.class);
+			mahasiswaService.insert(mhs);
 			return new ResponseEntity<>(mhs, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.lawencon.springboot.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,8 +11,9 @@ public class Universitas {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long id; 
 
+	@Column(nullable = false)
 	private String nama;
 
 	public Long getId() {

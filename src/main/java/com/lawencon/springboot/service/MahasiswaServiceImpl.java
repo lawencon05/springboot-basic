@@ -18,9 +18,13 @@ public class MahasiswaServiceImpl implements MahasiswaService {
 	@Autowired
 	@Qualifier(value = "jpa_method")
 	private MahasiswaDao mahasiswaDao;
+	
+	@Autowired
+	private UniversitasService universitasService;
 
 	@Override
 	public void insert(Mahasiswa data) throws Exception {
+		universitasService.getUnivById(data.getUniversitas().getId()); //validate pk : univ id
 		mahasiswaDao.insert(data);
 	}
 

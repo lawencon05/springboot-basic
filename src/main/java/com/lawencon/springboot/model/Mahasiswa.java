@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @JsonInclude(Include.NON_NULL) // jika ada variable yg null akan diabaikan
+@JsonIgnoreProperties(allowSetters = true, value = { "hibernateLazyInitializer", "universitas" }) // ignore saat serialize & lazy dan include ketika set data
 public class Mahasiswa {
 
 	@Id
@@ -31,8 +32,6 @@ public class Mahasiswa {
 
 	@ManyToOne(fetch = FetchType.LAZY) // lazy = tidak ditarik, eager = auto tarik
 	@JoinColumn(name = "univ_id")
-	@JsonIgnoreProperties(value = { "universitas", "hibernateLazyInitializer" }) // agar tidak terjadi error saat
-																					// convert jakson
 	private Universitas universitas;
 
 	@Column(name = "waktu_masuk")
